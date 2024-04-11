@@ -26,11 +26,15 @@ class UserController extends Controller
         }
         
         $user = UserModel::create([
+            'full_name'  => $request['full_name'],
             'username'  => $request['username'],
             'password'  => bcrypt($request['password']),
             'email'  => $request['email'],
-            'full_name'  => $request['full_name'],
         ]);
+
+        // Exclude password from the response
+        $user = $user->toArray();
+        unset($user['password']);
 
         return response()->json([
             'message'=>'user created successfully',
