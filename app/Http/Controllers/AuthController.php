@@ -14,6 +14,40 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username'  => ['required', 'string', 'max:255', 'unique:users'],
+            'password'  => ['required', 'string', 'min:8'],
+            'full_name' => ['required', 'string', 'max:255'],
+            'email'     => ['required', 'string', 'email', 'max:255', 'unique:users']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'validation failed',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+        
+        $user = User::create([
+            'full_name'  => $request['full_name'],
+            'username'  => $request['username'],
+            'password'  => bcrypt($request['password']),
+            'email'  => $request['email'],
+        ]);
+
+        // Exclude password from the response
+        $user = $user->toArray();
+        unset($user['password']);
+
+        return response()->json([
+            "status" => 'success',
+            'message'=>'user created successfully',
+            'data'=> $user,
+        ], 201);
+    }
 
     public function login(Request $request)
     {

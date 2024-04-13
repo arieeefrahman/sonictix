@@ -25,8 +25,5 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::post('me', 'me');
-});
-
-Route::controller(UserController::class)->group(function () {
     Route::post('register', 'register');
 });
