@@ -12,16 +12,11 @@ class LoginTest extends TestCase
     use RefreshDatabase;
     public function testSuccessLogin()
     {
-        $user = User::create([
-            'username'  => 'testuser',
-            'email'     => 'testuser@example.com',
-            'password'  => Hash::make('password123'),
-            'full_name' => 'Test User',
-        ]);
+        $user = User::factory()->create();
 
         $credentials = [
-            'username' => 'testuser',
-            'password' => 'password123',
+            'username' => $user->username,
+            'password' => 'password',
         ];
 
         $response = $this->post('/api/login', $credentials);
