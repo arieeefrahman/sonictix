@@ -4,13 +4,13 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
-    public function testSuccessLogin()
+
+    public function testLoginSuccess(): void
     {
         $user = User::factory()->create();
 
@@ -31,7 +31,7 @@ class LoginTest extends TestCase
         ]);
     }
 
-    public function testLoginWithBothUsernameAndEmail()
+    public function testLoginWithBothUsernameAndEmail(): void
     {
         $credentials = [
             'username'  => 'testuser',
@@ -47,7 +47,7 @@ class LoginTest extends TestCase
         ]);
     }
 
-    public function testLoginWithUnregisteredUser()
+    public function testLoginWithUnregisteredUser(): void
     {
         $credentials = [
             'username' => 'unregistereduser',
@@ -63,7 +63,7 @@ class LoginTest extends TestCase
         ]);
     }
 
-    public function testLoginWithInvalidBodyRequest()
+    public function testLoginWithInvalidBodyRequest(): void
     {
         $credentials = [
             'username' => 'invalidrequest',
