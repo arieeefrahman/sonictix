@@ -101,7 +101,7 @@ class AuthController extends Controller
                 'data' => [
                     'token' => $token,
                     'type' => 'bearer',
-                    'expires_in' => auth('api')->factory()->getTTL() * 60,
+                    'expires_in' => auth('api')->getTTL() * 60,
                 ]
             ]
         );
@@ -140,7 +140,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'user information',
+            'message' => 'User information.',
             'data' => $user,
         ], 200);
     }
