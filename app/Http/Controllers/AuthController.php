@@ -43,7 +43,7 @@ class AuthController extends Controller
         unset($user['password']);
 
         return response()->json([
-            "status" => 'success',
+            'status' => 'success',
             'message'=>'user created successfully',
             'data'=> $user,
         ], 201);
