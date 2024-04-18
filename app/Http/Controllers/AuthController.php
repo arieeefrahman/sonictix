@@ -133,7 +133,7 @@ class AuthController extends Controller
         );
     }
 
-    public function me()
+    public function getProfile()
     {
         $user = auth('api')->user()->toArray();
         unset($user['password']);
