@@ -51,7 +51,11 @@ class Event extends Model
             'end_date'          => ['sometimes', 'date_format:Y-m-d H:i:s', 'after:start_date'],
             'created_by'        => ['sometimes', 'string', 'max:255'],
             'location'          => ['sometimes', 'string', 'max:255'],
-            'google_maps_url'   => ['nullable', 'url'],
+            'google_maps_url'   => [
+                'nullable', 
+                'url',
+                'regex:/^https?:\/\/(maps\.app\.goo\.gl\/|www\.google\.com\/maps\/)/i',
+            ],
             'image'             => ['nullable', 'image', 'max:2048'],
         ];
 
