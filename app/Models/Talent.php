@@ -5,15 +5,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Talents extends Model
+class Talent extends Model
 {
     use HasFactory;
-
     protected $table = 'talents';
-
+    public $timestamps = false;
     protected $fillable = [
         'stage_name',
         'real_name',
         'image_url'
     ];
+
+    public static function rules($id = null)
+    {
+        $createRules = [
+            'stage_name' => ['required', 'string', 'max:255'],
+            'real_name' => ['nullable', 'string', 'max:255'],
+            'image_url' => ['nullable', 'url'],
+        ];
+
+        $updateRules = [
+            'stage_name' => ['sometimes', 'string', 'max:255'],
+            'real_name' => ['sometimes', 'string', 'max:255'],
+            'image_url' => ['sometimes', 'url'],
+        ];
+
+        return ($id === null) ? $createRules : $updateRules;
+    }
 }
