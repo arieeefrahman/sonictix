@@ -54,7 +54,7 @@ class EventController extends Controller
 
         if (!is_numeric($id)) {
             return response()->json([
-                'status' => 'error',
+                'status' => 'failed',
                 'message' => 'id must be numeric only',
             ], 400);
         }
