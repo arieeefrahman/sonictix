@@ -10,6 +10,7 @@ use Tests\TestCase;
 class GetEventByIdTest extends TestCase
 {
     use RefreshDatabase;
+    
     public function testGetEventByIdSuccess(): void
     {
         $user = User::factory()->create();
@@ -56,6 +57,31 @@ class GetEventByIdTest extends TestCase
         ])->get('/api/event/' . $id);
         
         $response->assertStatus(404);
+        $response->assertJsonStructure([
+            'status',
+            'message',
+        ]);
+    }
+
+    public function testGetEventByNonNumericId(): void
+    {
+        $user = User::factory()->create();
+        $credentials = [
+            'username' => $user->username,
+            'password' => 'password',
+        ];
+
+        $loginResponse = $this->post('/api/login', $credentials);
+        $token = $loginResponse->json('data.token');
+        $id = "non numeric id";
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('/api/event/' . $id);
+        
+        $response->assertStatus(400);
         $response->assertJsonStructure([
             'status',
             'message',
