@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\TalentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +35,12 @@ Route::controller(EventController::class)->group(function () {
     Route::get('event/{id}', 'getByID');
     Route::put('event/{id}', 'update');
     Route::delete('event/{id}', 'delete');
+});
+
+Route::controller(TalentController::class)->group(function () {
+    Route::post('talent', 'create');
+    Route::get('talents', 'getAll');
+    Route::get('talent/{id}', 'getById');
+    Route::put('talent/{id}', 'update');
+    Route::delete('talent/{id}', 'delete');
 });
