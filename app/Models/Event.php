@@ -27,9 +27,9 @@ class Event extends Model
      *
      * @return array
      */
-    public static function rules()
+    public static function rules($id = null)
     {
-        return [
+        $createRules = [
             'title'             => ['required', 'string', 'max:255'],
             'description'       => ['required', 'string'],
             'start_date'        => ['required', 'date_format:Y-m-d H:i:s'],
@@ -39,5 +39,18 @@ class Event extends Model
             'google_maps_url'   => ['nullable', 'url'],
             'image'             => ['nullable', 'image', 'max:2048'],
         ];
+
+        $updateRules = [
+            'title'             => ['sometimes', 'string', 'max:255'],
+            'description'       => ['sometimes', 'string'],
+            'start_date'        => ['sometimes', 'date_format:Y-m-d H:i:s'],
+            'end_date'          => ['sometimes', 'date_format:Y-m-d H:i:s', 'after:start_date'],
+            'created_by'        => ['sometimes', 'string', 'max:255'],
+            'location'          => ['sometimes', 'string', 'max:255'],
+            'google_maps_url'   => ['nullable', 'url'],
+            'image'             => ['nullable', 'image', 'max:2048'],
+        ];
+
+        return ($id === null) ? $createRules : $updateRules;
     }
 }

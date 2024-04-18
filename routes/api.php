@@ -30,4 +30,8 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::controller(EventController::class)->group(function () {
     Route::post('event', 'create');
+    Route::get('events', 'getAll');
+    Route::get('event/{id}', 'getByID');
+    Route::put('event/{id}', 'update');
+    Route::delete('event/{id}', 'delete');
 });
