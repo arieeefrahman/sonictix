@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), User::rules());
+        $validator = Validator::make($request->all(), User::rules('register'));
 
         if ($validator->fails()) {
             return response()->json([
@@ -46,11 +46,14 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username'  => ['required_without:email', 'nullable', 'string', 'max:255'],
-            'password'  => ['required', 'string', 'max:100'],
-            'email'     => ['required_without:username', 'nullable', 'string', 'email', 'max:255']
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'username'  => ['required_without:email', 'nullable', 'string', 'max:255'],
+        //     'password'  => ['required', 'string', 'max:100'],
+        //     'email'     => ['required_without:username', 'nullable', 'string', 'email', 'max:255']
+        // ]);
+
+        $validator = Validator::make($request->all(), User::rules('login'));
+
 
         if ($request->has('username') && $request->has('email')) {
             return response()->json([

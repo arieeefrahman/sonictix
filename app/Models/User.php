@@ -56,13 +56,21 @@ class User extends Authenticatable implements ContractsJWTSubject
      * @return array
      */
 
-    public static function rules()
+    public static function rules($id = null)
     {
-        return [
-            'username'  => ['required', 'string', 'max:255', 'unique:users'],
-            'password'  => ['required', 'string', 'min:8'],
-            'full_name' => ['required', 'string', 'max:255'],
-            'email'     => ['required', 'string', 'email', 'max:255', 'unique:users']
-        ];
+        if ($id === 'register') {
+            return [
+                'username'  => ['required', 'string', 'max:255', 'unique:users'],
+                'password'  => ['required', 'string', 'min:8'],
+                'full_name' => ['required', 'string', 'max:255'],
+                'email'     => ['required', 'string', 'email', 'max:255', 'unique:users']
+            ];
+        } elseif ($id === 'login') {
+            return [
+                'username'  => ['required_without:email', 'nullable', 'string', 'max:255'],
+                'password'  => ['required', 'string', 'max:100'],
+                'email'     => ['required_without:username', 'nullable', 'string', 'email', 'max:255']
+            ];
+        }
     }
 }
