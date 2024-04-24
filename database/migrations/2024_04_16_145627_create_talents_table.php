@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('stage_name');
             $table->string('real_name')->nullable();
-            $table->string('image_url');
+            $table->string('image_url')->nullable();
         });
     }
 
