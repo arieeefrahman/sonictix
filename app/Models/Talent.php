@@ -32,4 +32,9 @@ class Talent extends Model
 
         return ($id === null) ? $createRules : $updateRules;
     }
+
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'event_talents', 'talent_id', 'event_id');
+    }
 }

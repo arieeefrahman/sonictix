@@ -54,7 +54,7 @@ class EventController extends Controller
     public function getAll(): JsonResponse
     {
         $perPage = 10;
-        $events = Event::paginate($perPage);
+        $events = Event::with('talents')->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
@@ -75,7 +75,7 @@ class EventController extends Controller
         }
         
         try {
-            $event = Event::findOrFail($id);
+            $event = Event::with('talents')->findOrFail($id);
             return response()->json([
                 'status' => 'success',  
                 'message' => 'event with id = ' . $id,

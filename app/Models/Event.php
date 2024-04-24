@@ -61,4 +61,19 @@ class Event extends Model
 
         return ($id === null) ? $createRules : $updateRules;
     }
+
+    public function talents()
+    {
+        return $this->belongsToMany(Talent::class, 'event_talents', 'event_id', 'talent_id');
+    }
+
+    public function getTalentListAttribute()
+    {
+        return $this->talents->map(function ($talent) {
+            return [
+                'id' => $talent->id,
+                'stage_name' => $talent->stage_name,
+            ];
+        });
+    }
 }
