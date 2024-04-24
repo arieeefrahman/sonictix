@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Event;
 
+use App\Models\Talent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,6 +14,7 @@ class CreateEventTest extends TestCase
     public function testCreateEventSuccess(): void
     {
         $user = User::factory()->create();
+        $talent = Talent::factory()->create();
         $credentials = [
             'username' => $user->username,
             'password' => 'password',
@@ -28,7 +30,8 @@ class CreateEventTest extends TestCase
             'end_date'          => '2024-04-17 06:40:20',
             'created_by'        => 'California Records',
             'location'          => 'California',
-            'google_maps_url'   => 'https://www.google.com/maps/test'
+            'google_maps_url'   => 'https://www.google.com/maps/test',
+            'talent_ids'        => [ $talent->id ],
         ];
 
         $response = $this->withHeaders([
