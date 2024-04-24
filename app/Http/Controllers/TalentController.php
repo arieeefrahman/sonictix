@@ -66,7 +66,7 @@ class TalentController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'event not found',
+                'message' => 'talent not found',
             ], 404);
         }
     }
