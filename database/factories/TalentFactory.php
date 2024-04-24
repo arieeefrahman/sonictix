@@ -17,7 +17,7 @@ class TalentFactory extends Factory
         return [
             'stage_name' => fake()->name(),
             'real_name' => fake()->name(),
-            'image_url' => fake()->url()
+            'image_url' => fake()->imageUrl()
         ];
     }
 }
