@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\EventTalentController;
 
 class EventController extends Controller
 {
-    public function __construct()
+    protected $eventTalentController;
+
+    public function __construct(EventTalentController $eventTalentController)
     {
+        $this->eventTalentController = $eventTalentController;
         $this->middleware('auth:api');
     }
 
@@ -28,6 +32,17 @@ class EventController extends Controller
         }
 
         $event = Event::create($request->all());
+        $eventId = $event->id;
+
+        $response = $this->eventTalentController->create($request, $eventId);
+        if ($response->status() === 400) {
+            return $response;
+        }
+        
+        $content = $response->getContent();
+        $data = json_decode($content, true);
+        $eventTalent = $data['data'];
+        $event->event_talents = $eventTalent;
 
         return response()->json([
             'status' => 'success',
