@@ -44,6 +44,7 @@ class CreateEventTest extends TestCase
         $response->assertJsonStructure([
             'status',
             'message',
+            'data',
         ]);
     }
 
@@ -89,6 +90,41 @@ class CreateEventTest extends TestCase
 
         $requestBody = [
             'google_maps_url'   => 'google.com'
+        ];
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer' . $token,
+        ])->json('POST', '/api/event', $requestBody);
+        
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'status',
+            'message',
+        ]);
+    }
+
+    public function testCreateEventFailedTalentNotExisted(): void
+    {
+        $user = User::factory()->create();
+        $credentials = [
+            'username' => $user->username,
+            'password' => 'password',
+        ];
+
+        $loginResponse = $this->post('/api/login', $credentials);
+        $token = $loginResponse->json('data.token');
+
+        $requestBody = [
+            'title'             => 'Coachella Valley Music and Arts Festival 2024',
+            'description'       => 'It is not a dream. It is not a mirage. It is the newest stage joining the desert roster. More artists, extended sets.',
+            'start_date'        => '2024-04-17 06:40:18',
+            'end_date'          => '2024-04-17 06:40:20',
+            'created_by'        => 'California Records',
+            'location'          => 'California',
+            'google_maps_url'   => 'https://www.google.com/maps/test',
+            'talent_ids'        => [ 0 ],
         ];
 
         $response = $this->withHeaders([
