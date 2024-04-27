@@ -15,7 +15,7 @@ class EventTalentController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function create(Request $request, $eventId): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $rules = [
             'talent_ids' => 'required|array',
@@ -38,7 +38,7 @@ class EventTalentController extends Controller
 
         foreach ($talentIds as $talentId) {
             $eventTalent = EventTalent::create([
-                'event_id' => $eventId,
+                'event_id' => $request->event_id,
                 'talent_id' => $talentId,
             ]);
             $eventTalents[] = $eventTalent;

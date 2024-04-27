@@ -33,8 +33,9 @@ class EventController extends Controller
 
         $event = Event::create($request->all());
         $eventId = $event->id;
+        $request->merge(['event_id' => $eventId]);
 
-        $response = $this->eventTalentController->create($request, $eventId);
+        $response = $this->eventTalentController->create($request);
         if ($response->status() === 400) {
             return $response;
         }
