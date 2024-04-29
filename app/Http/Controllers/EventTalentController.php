@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\EventTalent;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +31,15 @@ class EventTalentController extends Controller
                 'message' => 'validation failed',
                 'errors' => $validator->errors()
             ], 400);
+        }
+
+        // Check if the event exists
+        $event = Event::find($request->event_id);
+        if (!$event) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'event id not exist'
+            ], 404);
         }
 
         $eventTalents = [];
