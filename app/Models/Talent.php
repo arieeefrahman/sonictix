@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Talent extends Model
 {
@@ -33,7 +34,7 @@ class Talent extends Model
         return ($id === null) ? $createRules : $updateRules;
     }
 
-    public function events()
+    public function events(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'event_talents', 'talent_id', 'event_id');
     }
