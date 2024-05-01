@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventTalentController;
 use App\Http\Controllers\TalentController;
@@ -48,4 +49,12 @@ Route::controller(TalentController::class)->group(function () {
 
 Route::controller(EventTalentController::class)->group(function () {
     Route::post('event-talent', 'create');
+});
+
+Route::controller(CategoryController::class)->group(function () {
+    Route::post('category', 'create');
+    Route::get('categories', 'getAll');
+    Route::get('category/{id}', 'getById');
+    Route::put('category/{id}', 'update');
+    Route::delete('category/{id}', 'delete');
 });
