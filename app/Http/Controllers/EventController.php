@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\EventTalentController;
+use App\Models\Talent;
 
 class EventController extends Controller
 {
@@ -32,18 +33,8 @@ class EventController extends Controller
         }
 
         $event = Event::create($request->all());
-        $eventId = $event->id;
-        $request->merge(['event_id' => $eventId]);
-
-        $response = $this->eventTalentController->create($request);
-        if ($response->status() === 400) {
-            return $response;
-        }
-        
-        $content = $response->getContent();
-        $data = json_decode($content, true);
-        $eventTalent = $data['data'];
-        $event->event_talents = $eventTalent;
+        $talents = Talent::whereIn('id', $request->talent_ids)->get();
+        $event->talents()->attach($talents);
 
         return response()->json([
             'status' => 'success',
