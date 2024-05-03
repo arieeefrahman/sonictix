@@ -71,16 +71,6 @@ class Event extends Model
         return $this->belongsToMany(Talent::class, 'event_talents', 'event_id', 'talent_id');
     }
 
-    public function eventCategories(): HasMany
-    {
-        return $this->hasMany(EventCategory::class);
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'event_categories', 'event_id', 'category_id')->withPivot('ticketStock');
-    }
-
     public function getTalentListAttribute()
     {
         return $this->talents->map(function ($talent) {

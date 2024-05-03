@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventTalentController;
+use App\Http\Controllers\EventTicketCategoryController;
 use App\Http\Controllers\TalentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -51,10 +51,10 @@ Route::controller(EventTalentController::class)->group(function () {
     Route::post('event-talent', 'create');
 });
 
-Route::controller(CategoryController::class)->group(function () {
-    Route::post('category', 'create');
-    Route::get('categories', 'getAll');
-    Route::get('category/{id}', 'getById');
-    Route::put('category/{id}', 'update');
-    Route::delete('category/{id}', 'delete');
+Route::controller(EventTicketCategoryController::class)->group(function () {
+    Route::post('ticket-category', 'create');
+    Route::get('ticket-category/{event_id}', 'getByEventId');
+    Route::get('ticket-category/{id}', 'getById');
+    Route::put('ticket-category/{id}', 'update');
+    Route::delete('ticket-category/{id}', 'delete');
 });

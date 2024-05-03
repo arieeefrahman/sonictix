@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('event_ticket_categories', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('event_id');
             $table->string('name');
             $table->integer('price');
+            $table->integer('ticket_stock');
+            $table->timestamps();
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');        
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('event_ticket_categories');
     }
 };
