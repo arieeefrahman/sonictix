@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('event_talents', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->foreignId('event_id')->constrained(
                 table: 'events', indexName: 'event_talents_event_id_foreign'
             )->onDelete('cascade');
