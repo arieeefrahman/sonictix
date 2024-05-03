@@ -53,7 +53,7 @@ class DeleteTalentTest extends TestCase
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $token,
-        ])->delete('/api/event/' . $id);
+        ])->delete('/api/talent/' . $id);
         
         $response->assertStatus(404);
         $response->assertJsonStructure([
@@ -72,13 +72,13 @@ class DeleteTalentTest extends TestCase
 
         $loginResponse = $this->post('/api/login', $credentials);
         $token = $loginResponse->json('data.token');
-        $id = "non numeric id";
+        $id = 'non numeric id';
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $token,
-        ])->delete('/api/event/' . $id);
+        ])->delete('/api/talent/' . $id);
         
         $response->assertStatus(400);
         $response->assertJsonStructure([
