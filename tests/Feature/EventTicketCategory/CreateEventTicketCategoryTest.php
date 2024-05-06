@@ -11,7 +11,7 @@ class CreateEventTicketCategoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateEventTicketCategorySuccess(): void
+    public function testCreateEventTicketCategorySuccessTwoItems(): void
     {
         $user = User::factory()->create();
         $credentials = [
@@ -51,7 +51,7 @@ class CreateEventTicketCategoryTest extends TestCase
         ]);
     }
 
-    public function testCreateEventTicketCategoryFailedRequestBodyIsNotInArray(): void
+    public function testCreateEventTicketCategorySuccessOneItem(): void
     {
         $user = User::factory()->create();
         $credentials = [
@@ -60,8 +60,17 @@ class CreateEventTicketCategoryTest extends TestCase
         ];
         $loginResponse = $this->post('/api/login', $credentials);
         $token = $loginResponse->json('data.token');
+        $event = Event::factory()->create();
+        $event_id = $event->id;
 
-        $requestBody = [];
+        $requestBody = [
+            [
+            'event_id' => $event_id,
+            'name' => fake()->name(),
+            'price' => rand(1000, 9999),
+            'ticket_stock' => rand(0, 100),
+            ]
+        ];
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
@@ -73,9 +82,41 @@ class CreateEventTicketCategoryTest extends TestCase
         $response->assertJsonStructure([
             'status',
             'message',
-            'data',
+            'data'
         ]);
     }
 
+    public function testCreateEventTicketCategoryFailedBadRequest(): void
+    {
+        $user = User::factory()->create();
+        $credentials = [
+            'username' => $user->username,
+            'password' => 'password',
+        ];
+        $loginResponse = $this->post('/api/login', $credentials);
+        $token = $loginResponse->json('data.token');
+        $event = Event::factory()->create();
+        $event_id = $event->id;
 
+        $requestBody = [
+            [
+            'event_id' => $event_id,
+            'price' => rand(1000, 9999),
+            'ticket_stock' => rand(0, 100),
+            ]
+        ];
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer' . $token,
+        ])->json('POST', '/api/ticket-category', $requestBody);
+        
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'errors'
+        ]);
+    }
 }
