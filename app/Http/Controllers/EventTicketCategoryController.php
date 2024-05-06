@@ -17,39 +17,24 @@ class EventTicketCategoryController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $requestData = $request->all();
-        if (!is_array($requestData)) {
+        $requestData = $request->json()->all();
+        $validator = Validator::make($requestData, EventTicketCategory::rules());
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'request must be in array',
+                'message' => 'validation failed',
+                'errors' => $validator->errors()
             ], 400);
         }
 
-        $validationErrors = [];
-        foreach ($requestData as $data) {
-            $validator = Validator::make($data, EventTicketCategory::rules());
-            if ($validator->fails()) {
-                $validationErrors[] = $validator->errors();
-            }
-        }
-
-        if (!empty($validationErrors)) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'validation failed for some records',
-                'errors' => $validationErrors
-            ], 400);
-        }
-
-        $createdRecords = [];
-        foreach ($requestData as $data) {
-            $createdRecords[] = EventTicketCategory::create($data);
-        }
+        $ticketCategories = collect($requestData)->map(function ($ticketCategory){
+            return EventTicketCategory::create($ticketCategory);
+        });
 
         return response()->json([
             'status'    => 'success',
             'message'   => 'ticket categories created successfully',
-            'data'      => $createdRecords,
+            'data'      => $ticketCategories,
         ]);
     }
 
@@ -113,7 +98,7 @@ class EventTicketCategoryController extends Controller
             ], 400);
         }
 
-        $validator = Validator::make($request->all(), EventTicketCategory::rules());
+        $validator = Validator::make($request->all(), EventTicketCategory::rules($id));
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
@@ -148,7 +133,7 @@ class EventTicketCategoryController extends Controller
             ], 400);
         }
 
-        $validator = Validator::make($request->all(), EventTicketCategory::rules());
+        $validator = Validator::make($request->all(), EventTicketCategory::rules($id));
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',

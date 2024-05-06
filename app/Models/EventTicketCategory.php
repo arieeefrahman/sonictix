@@ -20,10 +20,10 @@ class EventTicketCategory extends Model
     public static function rules($id = null)
     {
         $createTicketCategoryRules = [
-            'event_id'      => ['required', 'numeric'],
-            'name'          => ['required', 'string', 'min:1', 'max:255'],
-            'price'         => ['required', 'numeric'],
-            'ticket_stock'  => ['required', 'numeric'],
+            '*.event_id'        => ['required', 'numeric'],
+            '*.name'            => ['required', 'string', 'min:1', 'max:255'],
+            '*.price'           => ['required', 'numeric'],
+            '*.ticket_stock'    => ['required', 'numeric'],
         ];
         $updateTicketCategoryRules = [
             'event_id'      => ['sometimes', 'numeric'],
