@@ -53,7 +53,7 @@ Route::controller(EventTalentController::class)->group(function () {
 
 Route::controller(EventTicketCategoryController::class)->group(function () {
     Route::post('ticket-category', 'create');
-    Route::get('ticket-category/{event_id}', 'getByEventId');
+    Route::get('event/{event_id}/ticket-categories', 'getByEventId');
     Route::get('ticket-category/{id}', 'getById');
     Route::put('ticket-category/{id}', 'update');
     Route::delete('ticket-category/{id}', 'delete');
