@@ -26,7 +26,7 @@ class EventTicketCategory extends Model
             '*.ticket_stock'    => ['required', 'numeric'],
         ];
         $updateTicketCategoryRules = [
-            'event_id'      => ['sometimes', 'numeric'],
+            // 'event_id'      => ['required', 'numeric'],
             'name'          => ['sometimes', 'string', 'min:1', 'max:255'],
             'price'         => ['sometimes', 'numeric'],
             'ticket_stock'  => ['sometimes', 'numeric'],
