@@ -31,6 +31,7 @@ class EventFactory extends Factory
             'created_by' => $this->faker->name(),
             'location' => $this->faker->city(),
             'google_maps_url' => $googleMapsUrlFormat,
+            'image' => fake()->imageUrl()
         ];
     }
 }

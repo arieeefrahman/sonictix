@@ -43,7 +43,7 @@ class Event extends Model
                 'url',
                 'regex:/^https?:\/\/(maps\.app\.goo\.gl\/|www\.google\.com\/maps\/)/i',
             ],
-            'image'             => ['nullable', 'image', 'max:2048'],
+            'image'             => ['nullable', 'url', 'max:2048'],
             'talent_ids' => 'required|array',
             'talent_ids.*' => 'required|numeric|exists:talents,id',
         ];
@@ -60,7 +60,7 @@ class Event extends Model
                 'url',
                 'regex:/^https?:\/\/(maps\.app\.goo\.gl\/|www\.google\.com\/maps\/)/i',
             ],
-            'image'             => ['nullable', 'image', 'max:2048'],
+            'image'             => ['nullable', 'url', 'max:2048'],
         ];
 
         return ($id === null) ? $createRules : $updateRules;
