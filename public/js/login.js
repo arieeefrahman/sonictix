@@ -1,3 +1,11 @@
+window.addEventListener('load', function() {
+    const authToken = sessionStorage.getItem('authToken');
+    if (authToken && authToken !== 'null') {
+        // Redirect to the home page if the user is already logged in
+        window.location.href = '/home';
+    }
+});
+
 document.getElementById('login-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
