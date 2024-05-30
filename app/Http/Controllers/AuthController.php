@@ -46,12 +46,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'username'  => ['required_without:email', 'nullable', 'string', 'max:255'],
-        //     'password'  => ['required', 'string', 'max:100'],
-        //     'email'     => ['required_without:username', 'nullable', 'string', 'email', 'max:255']
-        // ]);
-
         $validator = Validator::make($request->all(), User::rules('login'));
 
 
@@ -80,7 +74,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Username, email, or password is wrong'
+                'message' => 'Username or password is wrong'
             ], 401);
         }
 
