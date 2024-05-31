@@ -45,7 +45,7 @@ class EventController extends Controller
 
     public function getAll(): JsonResponse
     {
-        $perPage = 10;
+        $perPage = 12;
         $events = Event::with('talents')->paginate($perPage);
 
         return response()->json([
