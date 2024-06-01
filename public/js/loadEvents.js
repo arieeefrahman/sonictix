@@ -39,9 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     const card = document.createElement('div');
                     card.className = 'card';
-                    imgURL = 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'
                     card.innerHTML = `
-                        <img src="${imgURL}" alt="${event.title}">
+                        <img src="${event.image}" alt="${event.title}">
                         <div class="card-body">
                             <div class="card-date">${new Date(event.start_date).toLocaleDateString('en-GB', {
                                 day: '2-digit',
@@ -53,6 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-price">Start from: Rp${minPrice.toLocaleString('id-ID')}</p>
                         </div>
                     `;
+                    
+                    card.addEventListener('click', () => {
+                        window.location.href = `/event/${event.id}`;
+                    });
 
                     eventsContainer.appendChild(card);
                 });
