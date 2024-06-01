@@ -15,13 +15,11 @@ class EventTicketCategoryFactory extends Factory
 
     public function definition(): array
     {
-        $event = Event::factory()->create();
-        $event_id = $event->id;
         return [
-            'event_id' => $event_id,
-            'name' => fake()->name(),
-            'price' => rand(1000, 9999),
-            'ticket_stock' => rand(0,100),
+            'event_id' => Event::factory(),
+            'name' => $this->faker->word(),
+            'price' => $this->faker->numberBetween(10, 99) * 1000,
+            'ticket_stock' => $this->faker->numberBetween(0, 100),
         ];
     }
 }

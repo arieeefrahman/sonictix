@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
@@ -44,8 +43,6 @@ class Event extends Model
                 'regex:/^https?:\/\/(maps\.app\.goo\.gl\/|www\.google\.com\/maps\/)/i',
             ],
             'image'             => ['nullable', 'url', 'max:2048'],
-            'talent_ids' => 'required|array',
-            'talent_ids.*' => 'required|numeric|exists:talents,id',
         ];
 
         $updateRules = [
@@ -65,19 +62,9 @@ class Event extends Model
 
         return ($id === null) ? $createRules : $updateRules;
     }
-
-    public function talents(): BelongsToMany
+    
+    public function event_ticket_categories(): HasMany
     {
-        return $this->belongsToMany(Talent::class, 'event_talents', 'event_id', 'talent_id');
-    }
-
-    public function getTalentListAttribute()
-    {
-        return $this->talents->map(function ($talent) {
-            return [
-                'id' => $talent->id,
-                'stage_name' => $talent->stage_name,
-            ];
-        });
+        return $this->hasMany(EventTicketCategory::class, 'event_id', 'id');
     }
 }

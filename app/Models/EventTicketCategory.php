@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventTicketCategory extends Model
 {
@@ -26,12 +27,16 @@ class EventTicketCategory extends Model
             '*.ticket_stock'    => ['required', 'numeric'],
         ];
         $updateTicketCategoryRules = [
-            // 'event_id'      => ['required', 'numeric'],
             'name'          => ['sometimes', 'string', 'min:1', 'max:255'],
             'price'         => ['sometimes', 'numeric'],
             'ticket_stock'  => ['sometimes', 'numeric'],
         ];
 
         return ($id === null) ? $createTicketCategoryRules : $updateTicketCategoryRules; 
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 }
