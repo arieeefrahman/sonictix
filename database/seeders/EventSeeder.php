@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Event;
+use App\Models\EventTicketCategory;
 use Illuminate\Database\Seeder;
 
 class EventSeeder extends Seeder
@@ -12,6 +13,13 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        Event::factory()->count(10)->create();
+        Event::factory()
+            ->count(20)
+            ->create()
+            ->each(function ($event) {
+                EventTicketCategory::factory()
+                    ->count(3)
+                    ->create(['event_id' => $event->id]);
+        });
     }
 }
