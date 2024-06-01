@@ -9,17 +9,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* position: -webkit-sticky; */
-    /* position: sticky;
+    position: -webkit-sticky;
+    position: sticky;
     top: 0;
-    z-index: 1000; */
+    z-index: 1000;
 }
 
 .navbar-brand {
     font-size: 1.5rem;
     color: #000;
     text-decoration: none;
-    margin-left: 2rem;
+    margin-left: 100px;
 }
 
 .navbar-nav {
