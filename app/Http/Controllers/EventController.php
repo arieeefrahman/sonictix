@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\EventTalentController;
-use App\Models\Talent;
+use App\Models\EventTicketCategory;
 
 class EventController extends Controller
 {
@@ -17,7 +17,8 @@ class EventController extends Controller
     public function __construct(EventTalentController $eventTalentController)
     {
         $this->eventTalentController = $eventTalentController;
-        $this->middleware('auth:api');
+        $this->middleware('auth:api', ['except' => ['getAll', 'getByID']]);
+
     }
 
     public function create(Request $request): JsonResponse
@@ -33,8 +34,8 @@ class EventController extends Controller
         }
 
         $event = Event::create($request->all());
-        $talents = Talent::whereIn('id', $request->talent_ids)->get();
-        $event->talents()->attach($talents);
+        // $event_ticket_categories = EventTicketCategory::whereIn('id', $request->$event->id)->get();
+        // $event->event_ticket_categories()->attach($event_ticket_categories);
 
         return response()->json([
             'status' => 'success',
@@ -46,7 +47,7 @@ class EventController extends Controller
     public function getAll(): JsonResponse
     {
         $perPage = 12;
-        $events = Event::with('talents')->paginate($perPage);
+        $events = Event::with('event_ticket_categories')->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
@@ -67,7 +68,7 @@ class EventController extends Controller
         }
         
         try {
-            $event = Event::with('talents')->findOrFail($id);
+            $event = Event::with('event_ticket_categories')->findOrFail($id);
             return response()->json([
                 'status' => 'success',  
                 'message' => 'event with id = ' . $id,
