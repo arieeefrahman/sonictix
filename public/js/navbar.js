@@ -18,5 +18,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function logout() {
     sessionStorage.removeItem('authToken');
-    window.location.href = "{{ url('/home') }}";
+    window.location.href = "/home";
 }
