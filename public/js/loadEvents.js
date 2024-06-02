@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 year: 'numeric'
                             })}</div>
                             <h3 class="card-title">${event.title}</h3>
-                            <p class="card-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</p>
+                            <p class="card-location"><i class="fas fa-map-marker-alt"></i>&ensp;${event.location}</p>
                             <p class="card-price">Start from: Rp${minPrice.toLocaleString('id-ID')}</p>
                         </div>
                     `;
