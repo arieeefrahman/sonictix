@@ -30,3 +30,7 @@ Route::get('/register', function () {
 Route::get('/login', function () {
     return view('login');
 });
+
+Route::get('/event/{id}', function () {
+    return view('event-detail');
+});
