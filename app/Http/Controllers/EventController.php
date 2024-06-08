@@ -7,15 +7,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\EventTalentController;
 
 class EventController extends Controller
 {
-    protected $eventTalentController;
 
-    public function __construct(EventTalentController $eventTalentController)
+    public function __construct()
     {
-        $this->eventTalentController = $eventTalentController;
         $this->middleware('auth:api', ['except' => ['getAll', 'getByID']]);
 
     }
