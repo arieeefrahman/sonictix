@@ -67,4 +67,9 @@ class Event extends Model
     {
         return $this->hasMany(EventTicketCategory::class, 'event_id', 'id');
     }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'event_id', 'id');
+    }
 }
