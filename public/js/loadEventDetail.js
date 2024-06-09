@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const eventDetailContainer = document.getElementById('event-detail-container');
     let selectedTickets = [];
     let eventId = getEventIdFromUrl();
@@ -35,155 +35,177 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const event = data.data;
                 const ticketCategories = event.event_ticket_categories;
-                renderTicketCategories(event, ticketCategories);
+                renderEventDetails(event);
+                renderTicketCategories(ticketCategories);
             })
             .catch(error => console.error('Error fetching event details:', error));
     }
 
-    function renderTicketCategories(event, ticketCategories) {
-        const ticketListHtml = ticketCategories.map(category => `
-            <div class="ticket-category" data-id="${category.id}" data-stock="${category.ticket_stock}">
-                <div class="ticket-color-bar" style="background-color: ${getRandomColor()};"></div>
-                <span class="ticket-name">${category.name}</span>
-                <span class="ticket-price">Rp${category.price.toLocaleString('id-ID')}</span>
-                ${category.ticket_stock > 0 ? `
-                    <div class="ticket-controls">
-                        <button class="ticket-add-btn">Add</button>
-                        <div class="ticket-quantity-controls" style="display: none;">
-                            <button class="ticket-btn decrease">-</button>
-                            <span class="ticket-quantity">1</span>
-                            <button class="ticket-btn increase">+</button>
-                        </div>
-                    </div>
-                ` : `
-                    <button class="sold-out">Out of stock</button>
-                `}
-            </div>
-        `).join('');
-
-        const ticketSummaryHtml = `
-            <div class="ticket-summary">
-                <span class="subtotal-label">Subtotal</span>
-                <span class="subtotal-amount">Rp${subtotal.toLocaleString('id-ID')}</span>
-                <button class="checkout-btn" disabled>Checkout</button>
-            </div>
-        `;
-
-        eventDetailContainer.innerHTML = `
-            <h1>${event.title}</h1>
-            <div class="event-image">
-                <img src="${event.image}" alt="${event.title}">
-            </div>
-            <div class="event-info">
-                <p><strong>Start date:</strong> ${new Date(event.start_date).toLocaleString()}</p>
-                <p><strong>End date:</strong> ${new Date(event.end_date).toLocaleString()}</p>
-                <p><strong>Location:</strong> <a href="${event.google_maps_url}" target="_blank">${event.location}</a></p>
-                <p><strong>Description:</strong> ${event.description}</p>
-            </div>
-            <div id="ticket-categories" class="ticket-categories">
-                <h2>Ticket Categories</h2>
-                <div class="ticket-list">
-                    ${ticketListHtml}
-                </div>
-                ${ticketSummaryHtml}
-            </div>
-        `;
-
-        // Add event listeners for add, increase and decrease buttons
-        document.querySelectorAll('.ticket-category').forEach(categoryElement => {
-            const addButton = categoryElement.querySelector('.ticket-add-btn');
-            const quantityControls = categoryElement.querySelector('.ticket-quantity-controls');
-            const decreaseButton = quantityControls.querySelector('.decrease');
-            const increaseButton = quantityControls.querySelector('.increase');
-            const quantityElement = quantityControls.querySelector('.ticket-quantity');
-            const priceElement = categoryElement.querySelector('.ticket-price');
-            const categoryId = categoryElement.getAttribute('data-id');
-            const stock = parseInt(categoryElement.getAttribute('data-stock'), 10);
-            const price = parseInt(priceElement.textContent.replace('Rp', '').replace(/\./g, ''), 10);
-
-            let quantity = 0;
-
-            addButton.addEventListener('click', () => {
-                if (stock > 0) {
-                    quantity = 1;
-                    addButton.style.display = 'none';
-                    quantityControls.style.display = 'flex';
-                    subtotal += price;
-                    selectedTickets.push({ event_ticket_category_id: categoryId, quantity, price });
-                    updateSubtotal();
-                    updateIncreaseButtonState();
-                    updateCheckoutButtonState();
-                } else {
-                    alert('No tickets available.');
-                }
-            });
-
-            decreaseButton.addEventListener('click', () => {
-                if (quantity > 1) {
-                    quantity--;
-                    quantityElement.textContent = quantity;
-                    subtotal -= price;
-                    updateTicketSelection(categoryId, quantity);
-                    updateSubtotal();
-                    updateIncreaseButtonState();
-                } else {
-                    quantity = 0;
-                    addButton.style.display = 'block';
-                    quantityControls.style.display = 'none';
-                    subtotal -= price;
-                    removeTicketSelection(categoryId);
-                    updateSubtotal();
-                    updateIncreaseButtonState();
-                    updateCheckoutButtonState();
-                }
-            });
-
-            increaseButton.addEventListener('click', () => {
-                if (quantity < stock && quantity < 5) {
-                    quantity++;
-                    quantityElement.textContent = quantity;
-                    subtotal += price;
-                    updateTicketSelection(categoryId, quantity);
-                    updateSubtotal();
-                    updateIncreaseButtonState();
-                }
-            });
-
-            const updateIncreaseButtonState = () => {
-                if (quantity >= stock || quantity >= 5) {
-                    increaseButton.disabled = true;
-                    increaseButton.style.backgroundColor = 'grey';
-                } else {
-                    increaseButton.disabled = false;
-                    increaseButton.style.backgroundColor = '';
-                }
-            };
-        });
-
-        document.querySelector('.checkout-btn').addEventListener('click', () => {
-            checkout();
-        });
-
-        updateSubtotal();
-        updateCheckoutButtonState(); // Initial check for the checkout button state
+    function renderEventDetails(event) {
+        document.getElementById('event-title').textContent = event.title;
+        const eventImage = document.getElementById('event-image');
+        eventImage.src = event.image;
+        eventImage.alt = event.title;
+        document.getElementById('event-start-date').textContent = new Date(event.start_date).toLocaleString();
+        document.getElementById('event-end-date').textContent = new Date(event.end_date).toLocaleString();
+        const eventLocation = document.getElementById('event-location');
+        eventLocation.href = event.google_maps_url;
+        eventLocation.textContent = event.location;
+        document.getElementById('event-description').textContent = event.description;
     }
 
-    const updateSubtotal = () => {
-        document.querySelector('.subtotal-amount').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
-    };
+    function renderTicketCategories(ticketCategories) {
+        const ticketList = document.getElementById('ticket-list');
+        ticketList.innerHTML = ''; // Clear previous ticket categories if any
 
-    const updateTicketSelection = (categoryId, quantity) => {
+        ticketCategories.forEach(category => {
+            const ticketCategoryDiv = document.createElement('div');
+            ticketCategoryDiv.className = 'ticket-category';
+            ticketCategoryDiv.dataset.id = category.id;
+            ticketCategoryDiv.dataset.stock = category.ticket_stock;
+
+            const colorBarDiv = document.createElement('div');
+            colorBarDiv.className = 'ticket-color-bar';
+            colorBarDiv.style.backgroundColor = getRandomColor();
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'ticket-name';
+            nameSpan.textContent = category.name;
+
+            const priceSpan = document.createElement('span');
+            priceSpan.className = 'ticket-price';
+            priceSpan.textContent = `Rp${category.price.toLocaleString('id-ID')}`;
+
+            ticketCategoryDiv.appendChild(colorBarDiv);
+            ticketCategoryDiv.appendChild(nameSpan);
+            ticketCategoryDiv.appendChild(priceSpan);
+
+            if (category.ticket_stock > 0) {
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'ticket-controls';
+
+                const addButton = document.createElement('button');
+                addButton.className = 'ticket-add-btn';
+                addButton.textContent = 'Add';
+
+                const quantityControlsDiv = document.createElement('div');
+                quantityControlsDiv.className = 'ticket-quantity-controls';
+                quantityControlsDiv.style.display = 'none';
+
+                const decreaseButton = document.createElement('button');
+                decreaseButton.className = 'ticket-btn decrease';
+                decreaseButton.textContent = '-';
+
+                const quantitySpan = document.createElement('span');
+                quantitySpan.className = 'ticket-quantity';
+                quantitySpan.textContent = '1';
+
+                const increaseButton = document.createElement('button');
+                increaseButton.className = 'ticket-btn increase';
+                increaseButton.textContent = '+';
+
+                quantityControlsDiv.appendChild(decreaseButton);
+                quantityControlsDiv.appendChild(quantitySpan);
+                quantityControlsDiv.appendChild(increaseButton);
+
+                controlsDiv.appendChild(addButton);
+                controlsDiv.appendChild(quantityControlsDiv);
+
+                ticketCategoryDiv.appendChild(controlsDiv);
+
+                addButton.addEventListener('click', () => handleAddButtonClick(category, addButton, quantityControlsDiv, increaseButton));
+                decreaseButton.addEventListener('click', () => handleDecreaseButtonClick(category, decreaseButton, quantitySpan, addButton, quantityControlsDiv, increaseButton));
+                increaseButton.addEventListener('click', () => handleIncreaseButtonClick(category, quantitySpan, increaseButton));
+            } else {
+                const soldOutButton = document.createElement('button');
+                soldOutButton.className = 'sold-out';
+                soldOutButton.textContent = 'Out of stock';
+                ticketCategoryDiv.appendChild(soldOutButton);
+            }
+
+            ticketList.appendChild(ticketCategoryDiv);
+        });
+
+        document.querySelector('.checkout-btn').addEventListener('click', checkout);
+        updateSubtotal();
+        updateCheckoutButtonState();
+    }
+
+    function handleAddButtonClick(category, addButton, quantityControlsDiv, increaseButton) {
+        if (category.ticket_stock > 0) {
+            let quantity = 1;
+            addButton.style.display = 'none';
+            quantityControlsDiv.style.display = 'flex';
+            subtotal += category.price;
+            selectedTickets.push({ event_ticket_category_id: category.id, quantity, price: category.price });
+            updateSubtotal();
+            updateIncreaseButtonState(quantity, category.ticket_stock, increaseButton);
+            updateCheckoutButtonState();
+        } else {
+            alert('No tickets available.');
+        }
+    }
+
+    function handleDecreaseButtonClick(category, decreaseButton, quantitySpan, addButton, quantityControlsDiv, increaseButton) {
+        let quantity = parseInt(quantitySpan.textContent, 10);
+        if (quantity > 1) {
+            quantity--;
+            quantitySpan.textContent = quantity;
+            subtotal -= category.price;
+            updateTicketSelection(category.id, quantity);
+            updateSubtotal();
+            updateIncreaseButtonState(quantity, category.ticket_stock, increaseButton);
+        } else {
+            quantity = 0;
+            addButton.style.display = 'block';
+            quantityControlsDiv.style.display = 'none';
+            subtotal -= category.price;
+            removeTicketSelection(category.id);
+            updateSubtotal();
+            updateIncreaseButtonState(quantity, category.ticket_stock, increaseButton);
+            updateCheckoutButtonState();
+        }
+    }
+
+    function handleIncreaseButtonClick(category, quantitySpan, increaseButton) {
+        let quantity = parseInt(quantitySpan.textContent, 10);
+        if (quantity < category.ticket_stock && quantity < 5) {
+            quantity++;
+            quantitySpan.textContent = quantity;
+            subtotal += category.price;
+            updateTicketSelection(category.id, quantity);
+            updateSubtotal();
+            updateIncreaseButtonState(quantity, category.ticket_stock, increaseButton);
+        }
+    }
+
+    function updateIncreaseButtonState(quantity, stock, increaseButton) {
+        if (quantity >= stock || quantity >= 5) {
+            increaseButton.disabled = true;
+            increaseButton.style.backgroundColor = 'grey';
+        } else {
+            increaseButton.disabled = false;
+            increaseButton.style.backgroundColor = '';
+        }
+    }
+
+    function updateSubtotal() {
+        const subtotalAmountElement = document.getElementById('subtotal-amount');
+        subtotalAmountElement.textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+    }
+
+    function updateTicketSelection(categoryId, quantity) {
         const ticket = selectedTickets.find(t => t.event_ticket_category_id === categoryId);
         if (ticket) {
             ticket.quantity = quantity;
         }
-    };
+    }
 
-    const removeTicketSelection = (categoryId) => {
+    function removeTicketSelection(categoryId) {
         selectedTickets = selectedTickets.filter(t => t.event_ticket_category_id !== categoryId);
-    };
+    }
 
-    const updateCheckoutButtonState = () => {
+    function updateCheckoutButtonState() {
         const checkoutButton = document.querySelector('.checkout-btn');
         if (selectedTickets.length === 0) {
             checkoutButton.disabled = true;
@@ -192,9 +214,9 @@ document.addEventListener('DOMContentLoaded', function() {
             checkoutButton.disabled = false;
             checkoutButton.style.backgroundColor = '';
         }
-    };
+    }
 
-    const checkout = () => {
+    function checkout() {
         const orderData = {
             event_id: eventId,
             items: selectedTickets
@@ -211,24 +233,23 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(orderData)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Order placed successfully!');
-                fetchEventDetails(); // Re-fetch event details to synchronize ticket stock
-                resetUI(); // Reset the UI after a successful checkout
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Order placed successfully!');
+                    fetchEventDetails(); // Re-fetch event details to synchronize ticket stock
+                    resetUI(); // Reset the UI after a successful checkout
+                    // TODO: 
+                    // 1. Redirect to a payment page or clear the selection
+                    // 2. Add sweetalert to success and error alert
+                } else {
+                    alert('Failed to place order: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error placing order:', error));
+    }
 
-                // TODO: 
-                // 1. Redirect to a payment page or clear the selection
-                // 2. Add sweetalert to success and error alert
-            } else {
-                alert('Failed to place order: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error placing order:', error));
-    };
-
-    const resetUI = () => {
+    function resetUI() {
         selectedTickets = [];
         subtotal = 0;
         updateSubtotal();
@@ -237,13 +258,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.ticket-category').forEach(categoryElement => {
             const addButton = categoryElement.querySelector('.ticket-add-btn');
             const quantityControls = categoryElement.querySelector('.ticket-quantity-controls');
-            const quantityElement = quantityControls.querySelector('.ticket-quantity');
+            const quantityElement = quantityControls ? quantityControls.querySelector('.ticket-quantity') : null;
 
-            addButton.style.display = 'block';
-            quantityControls.style.display = 'none';
-            quantityElement.textContent = '1';
+            if (addButton) addButton.style.display = 'block';
+            if (quantityControls) quantityControls.style.display = 'none';
+            if (quantityElement) quantityElement.textContent = '1';
         });
-    };
+    }
 
     fetchEventDetails();
 });
