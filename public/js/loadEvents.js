@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 1;
     const eventsContainer = document.getElementById('events-container');
     const loadMoreButton = document.createElement('button');
+    loadMoreButton.className = 'font-bold block mx-auto my-5 py-2.5 px-5 bg-blue-600 text-white border-none rounded-md cursor-pointer transition-transform duration-300 ease-in-out hover:-translate-y-1.5';
     loadMoreButton.id = 'load-more-button';
     loadMoreButton.textContent = 'Load More';
 
@@ -38,18 +39,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     let minPrice = Math.min(...event.event_ticket_categories.map(category => category.price));
                     
                     const card = document.createElement('div');
-                    card.className = 'card';
+                    card.className = 'cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-2 relative';
                     card.innerHTML = `
-                        <img src="${event.image}" alt="${event.title}">
-                        <div class="card-body">
-                            <div class="card-date">${new Date(event.start_date).toLocaleDateString('en-GB', {
+                        <img src="${event.image}" alt="${event.title}" class="w-full h-36 object-cover">
+                        <div class="p-4">
+                            <div class="absolute top-2.5 right-2.5 bg-gray-800 text-white px-2.5 py-1.5 rounded-md text-xs font-bold">${new Date(event.start_date).toLocaleDateString('en-GB', {
                                 day: '2-digit',
                                 month: 'long',
                                 year: 'numeric'
                             })}</div>
-                            <h3 class="card-title">${event.title}</h3>
-                            <p class="card-location"><i class="fas fa-map-marker-alt"></i>&ensp;${event.location}</p>
-                            <p class="card-price">Start from: Rp${minPrice.toLocaleString('id-ID')}</p>
+                            <h3 class="text-lg font-bold mb-2.5 whitespace-nowrap overflow-hidden text-ellipsis">${event.title}</h3>
+                            <p class="text-sm text-gray-500 mb-2.5"><i class="fas fa-map-marker-alt"></i>&ensp;${event.location}</p>
+                            <p class="text-base font-bold text-orange-600 mb-2.5">Start from: Rp${minPrice.toLocaleString('id-ID')}</p>
                         </div>
                     `;
                     

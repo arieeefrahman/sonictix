@@ -18,7 +18,10 @@ export default {
     extend: {
       colors: {
         brightBlue: '#0364b5',
-      }
+      },
+      fontFamily: {
+        lato: ['Lato', 'sans-serif'],
+      },
     },
   },
   plugins: [],
