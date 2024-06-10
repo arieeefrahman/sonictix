@@ -18,10 +18,14 @@ export default {
     extend: {
       colors: {
         brightBlue: '#0364b5',
+        brightWhite: '#f8f9fa',
       },
       fontFamily: {
         lato: ['Lato', 'sans-serif'],
       },
+      boxShadow: {
+        eventDetail: '0 0 10px rgba(0, 0, 0, 0.1)',
+      }
     },
   },
   plugins: [],
