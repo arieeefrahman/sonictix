@@ -56,80 +56,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTicketCategories(ticketCategories) {
-        const ticketList = document.getElementById('ticket-list');
+        const ticketList = document.querySelector('.ticket-list');
         ticketList.innerHTML = ''; // Clear previous ticket categories if any
 
+        const template = document.getElementById('ticket-category-template');
+
         ticketCategories.forEach(category => {
-            const ticketCategoryDiv = document.createElement('div');
-            ticketCategoryDiv.className = 'ticket-category';
+            const ticketCategoryDiv = template.content.cloneNode(true).querySelector('.ticket-category');
             ticketCategoryDiv.dataset.id = category.id;
             ticketCategoryDiv.dataset.stock = category.ticket_stock;
 
-            const colorBarDiv = document.createElement('div');
-            colorBarDiv.className = 'ticket-color-bar';
+            const colorBarDiv = ticketCategoryDiv.querySelector('.ticket-color-bar');
             colorBarDiv.style.backgroundColor = getRandomColor();
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'ticket-name';
+            const nameSpan = ticketCategoryDiv.querySelector('.ticket-name');
             nameSpan.textContent = category.name;
 
-            const priceSpan = document.createElement('span');
-            priceSpan.className = 'ticket-price';
+            const priceSpan = ticketCategoryDiv.querySelector('.ticket-price');
             priceSpan.textContent = `Rp${category.price.toLocaleString('id-ID')}`;
 
-            ticketCategoryDiv.appendChild(colorBarDiv);
-            ticketCategoryDiv.appendChild(nameSpan);
-            ticketCategoryDiv.appendChild(priceSpan);
-
             if (category.ticket_stock > 0) {
-                const controlsDiv = document.createElement('div');
-                controlsDiv.className = 'ticket-controls';
-
-                const addButton = document.createElement('button');
-                addButton.className = 'ticket-add-btn';
-                addButton.textContent = 'Add';
-
-                const quantityControlsDiv = document.createElement('div');
-                quantityControlsDiv.className = 'ticket-quantity-controls';
-                quantityControlsDiv.style.display = 'none';
-
-                const decreaseButton = document.createElement('button');
-                decreaseButton.className = 'ticket-btn decrease';
-                decreaseButton.textContent = '-';
-
-                const quantitySpan = document.createElement('span');
-                quantitySpan.className = 'ticket-quantity';
-                quantitySpan.textContent = '1';
-
-                const increaseButton = document.createElement('button');
-                increaseButton.className = 'ticket-btn increase';
-                increaseButton.textContent = '+';
-
-                quantityControlsDiv.appendChild(decreaseButton);
-                quantityControlsDiv.appendChild(quantitySpan);
-                quantityControlsDiv.appendChild(increaseButton);
-
-                controlsDiv.appendChild(addButton);
-                controlsDiv.appendChild(quantityControlsDiv);
-
-                ticketCategoryDiv.appendChild(controlsDiv);
+                const addButton = ticketCategoryDiv.querySelector('.ticket-add-btn');
+                const quantityControlsDiv = ticketCategoryDiv.querySelector('.ticket-quantity-controls');
+                const decreaseButton = ticketCategoryDiv.querySelector('.decrease');
+                const increaseButton = ticketCategoryDiv.querySelector('.increase');
+                const quantitySpan = ticketCategoryDiv.querySelector('.ticket-quantity');
 
                 addButton.addEventListener('click', () => handleAddButtonClick(category, addButton, quantityControlsDiv, increaseButton));
                 decreaseButton.addEventListener('click', () => handleDecreaseButtonClick(category, decreaseButton, quantitySpan, addButton, quantityControlsDiv, increaseButton));
                 increaseButton.addEventListener('click', () => handleIncreaseButtonClick(category, quantitySpan, increaseButton));
             } else {
-                const soldOutButton = document.createElement('button');
-                soldOutButton.className = 'sold-out';
-                soldOutButton.textContent = 'Out of stock';
-                ticketCategoryDiv.appendChild(soldOutButton);
+                ticketCategoryDiv.querySelector('.ticket-add-btn').style.display = 'none';
+                ticketCategoryDiv.querySelector('.sold-out').style.display = 'block';
+                priceSpan.style.display = 'none'; 
             }
 
             ticketList.appendChild(ticketCategoryDiv);
         });
 
-        document.querySelector('.checkout-btn').addEventListener('click', checkout);
+        renderCheckoutSummary();
         updateSubtotal();
         updateCheckoutButtonState();
+    }
+
+    function renderCheckoutSummary() {
+        const ticketCategoriesDiv = document.getElementById('ticket-categories');
+        const existingSummary = document.querySelector('.ticket-summary');
+        if (existingSummary) {
+            existingSummary.remove();
+        }
+
+        const summaryTemplate = document.getElementById('ticket-summary-template').content.cloneNode(true);
+        ticketCategoriesDiv.appendChild(summaryTemplate);
+
+        // Add event listener to the checkout button
+        document.querySelector('.checkout-btn').addEventListener('click', checkout);
     }
 
     function handleAddButtonClick(category, addButton, quantityControlsDiv, increaseButton) {
@@ -191,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSubtotal() {
-        const subtotalAmountElement = document.getElementById('subtotal-amount');
+        const subtotalAmountElement = document.querySelector('.subtotal-amount');
         subtotalAmountElement.textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
     }
 
@@ -225,6 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const token = sessionStorage.getItem('authToken');
 
+        if (!token) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'You need to login first to proceed with the checkout.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login'; // Adjust this URL to your login page
+                }
+            });
+            return;
+        }
+
         fetch('/api/order', {
             method: 'POST',
             headers: {
@@ -237,14 +234,53 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('Order placed successfully!');
+                    Swal.fire({
+                        title: "Order has been placed!",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        showClass: {
+                          popup: `
+                            animate__animated
+                            animate__fadeInUp
+                            animate__faster
+                          `
+                        },
+                        hideClass: {
+                          popup: `
+                            animate__animated
+                            animate__fadeOutDown
+                            animate__faster
+                          `
+                        }
+                    });
                     fetchEventDetails(); // Re-fetch event details to synchronize ticket stock
                     resetUI(); // Reset the UI after a successful checkout
                     // TODO: 
                     // 1. Redirect to a payment page or clear the selection
                     // 2. Add sweetalert to success and error alert
                 } else {
-                    alert('Failed to place order: ' + data.message);
+                    Swal.fire({
+                        title: "Failed to place order:",
+                        icon: "error",
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500,
+                        showClass: {
+                          popup: `
+                            animate__animated
+                            animate__fadeInUp
+                            animate__faster
+                          `
+                        },
+                        hideClass: {
+                          popup: `
+                            animate__animated
+                            animate__fadeOutDown
+                            animate__faster
+                          `
+                        }
+                    });
                 }
             })
             .catch(error => console.error('Error placing order:', error));
