@@ -21,14 +21,13 @@ The Event Ticket Booking System is designed to simplify the process of browsing 
 ## Technologies Used
 
 - **Backend:**
-  - PHP Laravel
-  - PostgreSQL
-  - Redis
+  - [PHP Laravel](https://laravel.com/){:target="_blank"}
+  - [PostgreSQL](https://www.postgresql.org/){:target="_blank"}
 
 - **Frontend:**
   - HTML
-  - CSS
-  - JavaScript
+  - [Tailwind CSS](https://tailwindcss.com/){:target="_blank"}
+  - [JavaScript](https://www.javascript.com/){:target="_blank"}
 
 ## Installation
 ### Prerequisites
