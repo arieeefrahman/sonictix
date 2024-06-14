@@ -9,8 +9,8 @@
 </head>
 <body class="body-setup-home font-lato">
     @include('navbar')
-    <div class="container mx-auto p-5 md:p-2.5">
-        <h1 class="text-3xl font-bold mb-5">Popular Events</h1>
+    <div class="container mx-auto my-5 p-5 md:p-2.5">
+        <h1 class="text-xl font-bold mb-5">Popular Events</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12" id="events-container">
             <!-- Event cards will be inserted here by JavaScript -->
         </div>
