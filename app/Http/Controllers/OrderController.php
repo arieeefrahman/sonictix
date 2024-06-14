@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\EventTicketCategory;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -16,7 +18,7 @@ class OrderController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         $rules = [
             'event_id' => 'required|exists:events,id',
@@ -88,6 +90,46 @@ class OrderController extends Controller
             DB::rollBack();
 
             return response()->json(['status' => 'error', 'message' => 'Order creation failed', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAll(): JsonResponse
+    {
+        $perPage = 10;
+        $orders = Order::with('order_details')
+                        ->orderBy('id', 'asc')
+                        ->paginate($perPage);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'all orders',
+            'data' => $orders,
+        ], 200);
+    }
+
+    public function getUserOrders(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $perPage = 10;
+            $orders = Order::with('order_details')
+                            ->where('user_id', $user->id)
+                            ->orderBy('id', 'asc')
+                            ->paginate($perPage);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'all orders',
+                'data' => $orders,
+            ], 200);        
+        } catch (\Exception $e) {
+            Log::error('Error when fetching user orders: ' . $e->getMessage());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'could not fetch orders',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }
