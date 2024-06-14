@@ -96,7 +96,7 @@ class OrderController extends Controller
     public function getAll(): JsonResponse
     {
         $perPage = 10;
-        $orders = Order::with('order_details')
+        $orders = Order::with(['order_details', 'event'])
                         ->orderBy('id', 'asc')
                         ->paginate($perPage);
 
@@ -112,7 +112,7 @@ class OrderController extends Controller
         try {
             $user = $request->user();
             $perPage = 10;
-            $orders = Order::with('order_details')
+            $orders = Order::with(['order_details', 'event'])
                             ->where('user_id', $user->id)
                             ->orderBy('id', 'asc')
                             ->paginate($perPage);
