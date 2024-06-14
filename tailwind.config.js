@@ -19,6 +19,7 @@ export default {
       colors: {
         brightBlue: '#0364b5',
         brightWhite: '#f8f9fa',
+        brightBlueHover: '#025b9f',
       },
       fontFamily: {
         lato: ['Lato', 'sans-serif'],
